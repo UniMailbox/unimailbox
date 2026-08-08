@@ -34,16 +34,23 @@ describe("administration console permission map", () => {
     }
   });
 
-  it("lets an administrator open the console", () => {
+  it("lets an administrator open the console on the settings entry", () => {
+    // In M1 admin only carries `settings.read` among the console-permission
+    // keys listed in ADMIN_RESOURCE_PERMISSIONS (see blueprint §3.3 and
+    // issue #14). The other entries (`users`, `messages`, …) light up
+    // across M2 (issue #23) and M5 (issue #26).
     expect(canOpenAdminConsole(ADMINISTRATOR_PERMISSIONS)).toBe(true);
-    expect(adminConsoleEntryResource(ADMINISTRATOR_PERMISSIONS)).toBe("users");
+    expect(adminConsoleEntryResource(ADMINISTRATOR_PERMISSIONS)).toBe(
+      "settings",
+    );
   });
 
-  it("opens the mailbox-scoped attachment catalog for a plain member", () => {
-    expect(canOpenAdminConsole(MEMBER_PERMISSIONS)).toBe(true);
-    expect(adminConsoleEntryResource(MEMBER_PERMISSIONS)).toBe("attachments");
-    expect(MEMBER_PERMISSIONS).toContain("attachment.read");
-    expect(MEMBER_PERMISSIONS).not.toContain("message.read_all");
+  it("has no member role permissions in M1", () => {
+    // The member role is absent in M1 (issue #16 / #23). When M2 restores it,
+    // re-add the original assertion mirroring the removed test below.
+    expect(MEMBER_PERMISSIONS).toEqual([]);
+    expect(canOpenAdminConsole(MEMBER_PERMISSIONS)).toBe(false);
+    expect(adminConsoleEntryResource(MEMBER_PERMISSIONS)).toBeNull();
   });
 
   it("grants the console to a principal holding a single console permission", () => {

@@ -1,10 +1,10 @@
 import { applyD1Migrations, env } from "cloudflare:test";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  ADMINISTRATOR_PERMISSIONS,
   BREVO_PROVIDER_KEY,
   type Principal,
 } from "@unimailbox/contracts";
+import { TEST_ADMIN_PERMISSIONS } from "@unimailbox/test-kit";
 import { AttachmentApplicationService } from "../../src/modules/attachments";
 import { UploadTokenCodec } from "../../src/modules/attachments/upload-token";
 import { MailboxApplicationService } from "../../src/modules/mailboxes";
@@ -16,10 +16,13 @@ import { createBrevoProviderPlugin } from "../../src/integrations/brevo";
 import { createAttachmentStore } from "../../src/platform/attachment-store";
 import type { Env } from "../../src/platform/config";
 
+// Tests here cover code paths from M2..M9 too. See issue #14 / blueprint §3.3
+// — production admin principals receive only 5 MVP keys, so use the
+// fully-privileged test-kit constant to exercise the broader surface.
 const principal: Principal = {
   userId: "11111111-1111-4111-8111-111111111111",
   email: "owner@example.com",
-  permissions: new Set(ADMINISTRATOR_PERMISSIONS),
+  permissions: new Set(TEST_ADMIN_PERMISSIONS),
 };
 
 const senderId = "33333333-3333-4333-8333-333333333333";
