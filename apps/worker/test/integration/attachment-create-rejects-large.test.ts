@@ -1,18 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { applyD1Migrations, env } from "cloudflare:test";
-import {
-  ADMINISTRATOR_PERMISSIONS,
-  type Principal,
-} from "@unimailbox/contracts";
+import { type Principal } from "@unimailbox/contracts";
+import { TEST_ADMIN_PERMISSIONS } from "@unimailbox/test-kit";
 import { AttachmentApplicationService } from "../../src/modules/attachments";
 import { UploadTokenCodec } from "../../src/modules/attachments/upload-token";
 import { createAttachmentStore } from "../../src/platform/attachment-store";
 import type { Env } from "../../src/platform/config";
 
+// See issue #14 / blueprint §3.3: this test exercises the full attachment
+// surface, which is restored in M6 (#27). Production admin principals in M1
+// only have the 5-key MVP grant; use the test-kit superset.
 const principal: Principal = {
   userId: "11111111-1111-4111-8111-111111111111",
   email: "owner@example.com",
-  permissions: new Set(ADMINISTRATOR_PERMISSIONS),
+  permissions: new Set(TEST_ADMIN_PERMISSIONS),
 };
 
 function makeEnv(withoutR2: boolean): Env {

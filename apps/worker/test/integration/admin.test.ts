@@ -1,12 +1,12 @@
 import { applyD1Migrations, env } from "cloudflare:test";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  ADMINISTRATOR_PERMISSIONS,
   BREVO_PROVIDER_KEY,
   type Principal,
   type ProviderKey,
   type ProviderPlugin,
 } from "@unimailbox/contracts";
+import { TEST_ADMIN_PERMISSIONS } from "@unimailbox/test-kit";
 import { AdminApplicationService } from "../../src/modules/administration";
 import { ProviderRegistry } from "../../src/integrations/providers";
 import { createBrevoProviderPlugin } from "../../src/integrations/brevo";
@@ -16,10 +16,14 @@ import { createAttachmentStore } from "../../src/platform/attachment-store";
 
 const cipher = new CredentialCipher("e".repeat(32));
 
+// Tests in this file exercise admin code paths beyond the M1 surface (e.g.
+// `user.manage`, `message.read_all`). They need the full permission key set
+// at runtime; production admins only ever get the 5-key MVP grant — see
+// issue #14 / blueprint §3.3.
 const administrator: Principal = {
   userId: "11111111-1111-4111-8111-111111111111",
   email: "admin@example.com",
-  permissions: new Set(ADMINISTRATOR_PERMISSIONS),
+  permissions: new Set(TEST_ADMIN_PERMISSIONS),
 };
 
 function service(fetcher = vi.fn()) {

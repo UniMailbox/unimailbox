@@ -9,6 +9,10 @@ import {
 
 describe("authenticated navigation model", () => {
   it("keeps mail folders, settings, and administration as one hierarchy", () => {
+    // MVP admin only holds `settings.read` among console-permission keys
+    // (blueprint §3.3, issue #14). The admin section therefore exposes the
+    // single "settings" leaf until M2/M5 (issues #23 and #26) re-introduce
+    // the rest. Re-arm the "users" assertion once those land.
     const groups = getNavigationModel({
       pathname: "/settings/preferences",
       mailboxId: "mailbox-1",
@@ -33,7 +37,7 @@ describe("authenticated navigation model", () => {
       "mailboxes",
       "preferences",
     ]);
-    expect(groups[2]?.children.map((item) => item.id)).toContain("users");
+    expect(groups[2]?.children.map((item) => item.id)).toEqual(["settings"]);
     expect(isNavigationGroupActive(groups[1]!, "/settings/preferences")).toBe(
       true,
     );

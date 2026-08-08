@@ -17,6 +17,7 @@
     "@unimailbox/config": "workspace:*",
     "@unimailbox/contracts": "workspace:*",
     "@unimailbox/email-core": "workspace:*",
+    "@unimailbox/test-kit": "workspace:*",
     "drizzle-orm": "^0.45.2",
     "hono": "^4.6.14",
     "postal-mime": "^2.4.3",

@@ -111,17 +111,49 @@ export const PERMISSION_KEYS = [
 ] as const;
 
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
-export const ADMINISTRATOR_PERMISSIONS: readonly PermissionKey[] =
-  PERMISSION_KEYS;
-export const MEMBER_PERMISSIONS: readonly PermissionKey[] = [
+
+/**
+ * MVP role-permission sets — see issue #14 / blueprint §3.3.
+ *
+ * `PERMISSION_KEYS` retains every permission string (currently 22) so that
+ * call sites like `assertPermission(principal, "user.manage")` still
+ * type-check during the MVP cut. At runtime only the administrator role is
+ * seeded (migrations/0002_seed_permissions.sql, after the M1 trim described
+ * in issue #16 / #17); the 5 keys below are the only ones the role grants.
+ * Removing the remaining strings from `PERMISSION_KEYS` is deferred to the
+ * sub-issues below so the refactor can land one route group at a time.
+ *
+ * Deferred permission keys and the milestone that re-introduces them:
+ *   message.read_all   – re-enable in M2 (shared mailbox, #23) so admin can
+ *                        list every message across managed domains
+ *   message.delete     – M2 (#23)
+ *   attachment.read    – M6 (#27) — depends on the attachment route coming
+ *                        back first
+ *   mailbox.manage     – M2 (#23)
+ *   mailbox.share      – M2 (#23)
+ *   user.read          – behind `settings.manage` for M1; reintroduce in M5
+ *                        (#26) once the admin user-management screen ships
+ *   user.manage        – M5 (#26)
+ *   role.read          – M5 (#26)
+ *   role.manage        – M5 (#26)
+ *   domain.read        – M5 (#26)
+ *   domain.manage      – M5 (#26)
+ *   signature.read     – M5 (#26)
+ *   signature.manage   – M5 (#26)
+ *   provider.sync      – M4 (#25) (when a second provider lights up)
+ *   webhook_event.read – M4 (#25) (webhook audit becomes meaningful with a
+ *                        second provider)
+ *   webhook_event.delete – M4 (#25)
+ *   analytics.read     – M9 (#30)
+ */
+export const ADMINISTRATOR_PERMISSIONS: readonly PermissionKey[] = [
   "message.read",
   "message.send",
-  "message.delete",
-  "attachment.read",
   "mailbox.create",
-  "mailbox.manage",
-  "mailbox.share",
+  "settings.read",
+  "settings.manage",
 ];
+export const MEMBER_PERMISSIONS: readonly PermissionKey[] = [];
 
 export interface Principal {
   userId: UserId;

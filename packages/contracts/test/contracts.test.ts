@@ -12,7 +12,6 @@ import {
   MAX_ATTACHMENT_BYTES,
   MEMBER_PERMISSIONS,
   MessageStatus,
-  PERMISSION_KEYS,
   PRESIGN_TTL_SECONDS,
   RecipientType,
   SendMessageSchema,
@@ -44,21 +43,21 @@ describe("provider keys", () => {
   );
 });
 
-describe("permission contracts", () => {
-  it("grants the administrator every declared permission", () => {
-    expect(ADMINISTRATOR_PERMISSIONS).toEqual(PERMISSION_KEYS);
-  });
-
-  it("keeps member permissions scoped to mailbox messaging", () => {
-    expect(MEMBER_PERMISSIONS).toEqual([
+describe("permission contracts (MVP, see blueprint §3.3)", () => {
+  it("grants the administrator the MVP-only permission set", () => {
+    expect(ADMINISTRATOR_PERMISSIONS).toEqual([
       "message.read",
       "message.send",
-      "message.delete",
-      "attachment.read",
       "mailbox.create",
-      "mailbox.manage",
-      "mailbox.share",
+      "settings.read",
+      "settings.manage",
     ]);
+  });
+
+  it("keeps the (currently absent) member role permissionless", () => {
+    // The `member` role is not seeded in M1 (issue #16). Reintroduce the
+    // 7-permission member set in M2 with issue #23.
+    expect(MEMBER_PERMISSIONS).toEqual([]);
   });
 });
 
